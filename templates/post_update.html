@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+
+<!-- Main Content -->
+{% block content %}
+  <main class="container">
+      <!-- Back Button -->
+      <div class="page-header" style="margin-bottom: 20px;">
+          <a href="{% url 'post' post.id %}" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 8px;">
+              <i class="fas fa-arrow-left"></i> Orqaga
+          </a>
+      </div>
+
+      <!-- Update Form -->
+      <div class="post-form-container" style="max-width: 800px; margin: 0 auto;">
+          <!-- Form Header -->
+          <div class="form-header" style="text-align: center; margin-bottom: 40px;">
+              <h1 class="page-title" style="font-size: 32px; color: #1e293b; margin-bottom: 15px;">
+                  <i class="fas fa-edit"></i> Postni Tahrirlash
+              </h1>
+              <p style="color: #64748b; font-size: 16px;">
+                  Post ma'lumotlarini o'zgartiring va saqlang
+              </p>
+          </div>
+
+          <!-- Update Form -->
+          <form method="POST" action="{% url 'post_update' post.id %}" class="post-form" style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);">
+              {% csrf_token %}
+
+              <!-- Title Field -->
+              <div class="form-group" style="margin-bottom: 30px;">
+                  <label for="title" style="display: block; font-weight: 600; color: #374151; margin-bottom: 10px; font-size: 16px;">
+                      <i class="fas fa-heading"></i> Sarlavha
+                  </label>
+                  <input 
+                      type="text" 
+                      id="title" 
+                      name="title" 
+                      value="{{ post.title }}" 
+                      class="form-input"
+                      style="width: 100%; padding: 16px 20px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 16px; transition: all 0.3s;"
+                      placeholder="Post sarlavhasini kiriting..."
+                      required
+                      maxlength="150"
+                      oninput="updateCharCount('title', 'titleCount', 150)"
+                  >
+                  <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                      <small style="color: #6b7280; font-size: 14px;">
+                          Sarlavha uzunligi 150 belgidan oshmasin
+                      </small>
+                      <small style="color: #6b7280; font-size: 14px;">
+                          <span id="titleCount">0</span>/150
+                      </small>
+                  </div>
+              </div>
+
+              <!-- Body Field -->
+              <div class="form-group" style="margin-bottom: 30px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                      <label for="body" style="font-weight: 600; color: #374151; font-size: 16px;">
+                          <i class="fas fa-align-left"></i> Matn
+                      </label>
+                      <div style="display: flex; gap: 10px;">
+                          <button type="button" class="format-btn" onclick="formatText('bold')" style="background: #f3f4f6; border: none; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; color: #4b5563;">
+                              <i class="fas fa-bold"></i>
+                          </button>
+                          <button type="button" class="format-btn" onclick="formatText('italic')" style="background: #f3f4f6; border: none; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; color: #4b5563;">
+                              <i class="fas fa-italic"></i>
+                          </button>
+                          <button type="button" class="format-btn" onclick="formatText('link')" style="background: #f3f4f6; border: none; width: 36px; height: 36px; border-radius: 6px; cursor: pointer; color: #4b5563;">
+                              <i class="fas fa-link"></i>
+                          </button>
+                      </div>
+                  </div>
+                  <textarea 
+                      id="body" 
+                      name="body" 
+                      rows="15" 
+                      class="form-textarea"
+                      style="width: 100%; padding: 20px; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 16px; line-height: 1.6; resize: vertical; transition: all 0.3s; font-family: 'Arial', sans-serif;"
+                      placeholder="Post matnini kiriting..."
+                      required
+                      oninput="updateCharCount('body', 'bodyCount')"
+                  >{{ post.body }}</textarea>
+                  <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                      <small style="color: #6b7280; font-size: 14px;">
+                          Markdown formatida yozishingiz mumkin
+                      </small>
+                      <small style="color: #6b7280; font-size: 14px;">
+                          <span id="bodyCount">0</span> belgi
+                      </small>
+                  </div>
+              </div>
+
+              <!-- Preview Section -->
+              <div class="form-group" style="margin-bottom: 30px;">
+                  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                      <button type="button" onclick="togglePreview()" id="previewToggle" style="background: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px;">
+                          <i class="fas fa-eye"></i> Ko'rib chiqish
+                      </button>
+                      <span style="color: #6b7280; font-size: 14px;">
+                          Post qanday ko'rinishini tekshiring
+                      </span>
+                  </div>
+                  
+                  <div id="previewContainer" style="display: none; background: #f9fafb; padding: 25px; border-radius: 10px; border: 2px dashed #d1d5db;">
+                      <h3 style="color: #1f2937; margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid #e5e7eb;">
+                          <i class="fas fa-newspaper"></i> Ko'rib chiqish
+                      </h3>
+                      <div id="previewContent" style="line-height: 1.7; color: #374151;">
+                          Matn kiritilgandan so'ng bu yerda ko'rinadi...
+                      </div>
+                  </div>
+              </div>
+
+              <!-- Form Actions -->
+              <div class="form-actions" style="display: flex; justify-content: flex-end; gap: 15px; margin-top: 40px; padding-top: 25px; border-top: 2px solid #e5e7eb;">
+                  <a href="{% url 'post' post.id %}" class="btn btn-secondary" style="padding: 14px 28px;">
+                      <i class="fas fa-times"></i> Bekor qilish
+                  </a>
+                  <button type="submit" class="btn btn-primary" style="padding: 14px 28px; display: inline-flex; align-items: center; gap: 10px;">
+                      <i class="fas fa-save"></i> Saqlash
+                  </button>
+              </div>
+          </form>
+
+          <!-- Post Info -->
+          <div class="post-info" style="background: #f8fafc; padding: 25px; border-radius: 12px; margin-top: 30px;">
+              <h3 style="color: #374151; margin-bottom: 20px; font-size: 18px;">
+                  <i class="fas fa-info-circle"></i> Post haqida ma'lumot
+              </h3>
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                  <div style="display: flex; flex-direction: column;">
+                      <span style="color: #6b7280; font-size: 14px; margin-bottom: 5px;">Muallif</span>
+                      <span style="color: #1f2937; font-weight: 600;">
+                          {{ post.author.first_name }} {{ post.author.last_name }}
+                      </span>
+                  </div>
+                  <div style="display: flex; flex-direction: column;">
+                      <span style="color: #6b7280; font-size: 14px; margin-bottom: 5px;">Yaratilgan</span>
+                      <span style="color: #1f2937; font-weight: 600;">
+                          {{ post.created_at|date:"d.m.Y H:i" }}
+                      </span>
+                  </div>
+                  <div style="display: flex; flex-direction: column;">
+                      <span style="color: #6b7280; font-size: 14px; margin-bottom: 5px;">Oxirgi tahrir</span>
+                      <span style="color: #1f2937; font-weight: 600;">
+                          {{ post.updated_at|date:"d.m.Y H:i" }}
+                      </span>
+                  </div>
+                  <div style="display: flex; flex-direction: column;">
+                      <span style="color: #6b7280; font-size: 14px; margin-bottom: 5px;">ID</span>
+                      <span style="color: #1f2937; font-weight: 600;">
+                          #{{ post.id }}
+                      </span>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </main>
+
+  <!-- JavaScript for character counting and preview -->
+  <script>
+      // Character counter
+      function updateCharCount(fieldId, countId, max = null) {
+          const field = document.getElementById(fieldId);
+          const countElement = document.getElementById(countId);
+          const count = field.value.length;
+          
+          if (max) {
+              countElement.textContent = count + '/' + max;
+              if (count > max * 0.9) {
+                  countElement.style.color = '#dc2626';
+              } else if (count > max * 0.7) {
+                  countElement.style.color = '#f59e0b';
+              } else {
+                  countElement.style.color = '#6b7280';
+              }
+          } else {
+              countElement.textContent = count;
+          }
+      }
+
+      // Format text buttons
+      function formatText(type) {
+          const textarea = document.getElementById('body');
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          const selectedText = textarea.value.substring(start, end);
+          
+          let formattedText = '';
+          switch(type) {
+              case 'bold':
+                  formattedText = '**' + selectedText + '**';
+                  break;
+              case 'italic':
+                  formattedText = '*' + selectedText + '*';
+                  break;
+              case 'link':
+                  formattedText = '[Matn](http://link)';
+                  break;
+          }
+          
+          textarea.value = textarea.value.substring(0, start) + formattedText + textarea.value.substring(end);
+          textarea.focus();
+          
+          // Update preview if visible
+          if (document.getElementById('previewContainer').style.display !== 'none') {
+              updatePreview();
+          }
+      }
+
+      // Preview toggle
+      function togglePreview() {
+          const container = document.getElementById('previewContainer');
+          const button = document.getElementById('previewToggle');
+          
+          if (container.style.display === 'none') {
+              container.style.display = 'block';
+              button.innerHTML = '<i class="fas fa-eye-slash"></i> Yashirish';
+              updatePreview();
+          } else {
+              container.style.display = 'none';
+              button.innerHTML = '<i class="fas fa-eye"></i> Ko\'rib chiqish';
+          }
+      }
+
+      // Update preview content
+      function updatePreview() {
+          const textarea = document.getElementById('body');
+          const preview = document.getElementById('previewContent');
+          
+          // Simple markdown to HTML conversion
+          let html = textarea.value;
+          
+          // Bold
+          html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+          
+          // Italic
+          html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+          
+          // Links
+          html = html.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2" style="color: #4f46e5;">$1</a>');
+          
+          // Line breaks
+          html = html.replace(/\n/g, '<br>');
+          
+          // Headers (simple)
+          html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+          html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+          html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+          
+          preview.innerHTML = html || '<span style="color: #9ca3af;">Matn kiritilmagan...</span>';
+      }
+
+      // Initialize character counts on page load
+      document.addEventListener('DOMContentLoaded', function() {
+          updateCharCount('title', 'titleCount', 150);
+          updateCharCount('body', 'bodyCount');
+      });
+
+      // Auto-save draft (optional)
+      let autoSaveTimer;
+      const bodyField = document.getElementById('body');
+      const titleField = document.getElementById('title');
+      
+      function autoSaveDraft() {
+          clearTimeout(autoSaveTimer);
+          autoSaveTimer = setTimeout(() => {
+              // You can implement auto-save here if needed
+              console.log('Auto-save triggered');
+          }, 2000);
+      }
+      
+      bodyField.addEventListener('input', autoSaveDraft);
+      titleField.addEventListener('input', autoSaveDraft);
+  </script>
+{% endblock %}

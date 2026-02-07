@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+<!-- Main Content -->
+{% block content %}
+    <main class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <h2 class="page-title">
+                <i class="fas fa-stream"></i> Barcha Postlar
+            </h2>
+            <div class="action-buttons">
+                <a href="{% url 'post_create' %}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Yangi Post
+                </a>
+            </div>
+        </div>
+
+        <!-- Search Box -->
+        <div class="search-container">
+            <i class="fas fa-search search-icon"></i>
+            <input 
+                type="text" 
+                id="searchInput" 
+                class="search-input" 
+                placeholder="Postlarni qidirish..."
+                autocomplete="off"
+            >
+        </div>
+
+        <!-- Posts Grid -->
+        {% if posts %}
+
+        <div class="posts-grid" id="postsGrid">
+            {% for post in posts %}
+              <div class="post-card">
+                  <div class="post-image">
+                      <i class="fas fa-code"></i>
+                  </div>
+                  <div class="post-content">
+                      <div class="post-header">
+                          <h3 class="post-title">
+                              <a href="{% url 'post' post.id %}">{{ post.title | slice:":200" }}...</a>
+                              {% if request.user == post.author %}
+                              <span class="badge badge-own">Sizning</span>
+                              {% endif %}
+                          </h3>
+                          <div class="post-meta">
+                              <span class="post-author">
+                                  <i class="fas fa-user"></i> {{ post.author.first_name }} {{ post.author.last_name }}
+                              </span>
+                              <span class="post-date">
+                              <span>Yaratilgan: <div style="display: flex; flex-direction: column;"><span>{{ post.created_at | timesince }}</span><span>| {{ post.created_at|date:"d-m-Y H:i" }} |</span></div></span>
+                              </span>
+                          </div>
+                      </div>
+                      
+                      <p class="post-excerpt">
+                          {{ post.body | slice:":200"}}
+                      </p>
+                      
+                      <div class="post-footer">
+                          <a href="{% url 'post' post.id %}" class="read-more">
+                              O'qish <i class="fas fa-arrow-right"></i>
+                          </a>
+                      </div>
+                  </div>
+              </div>
+            {% endfor %}
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button class="page-btn disabled">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">4</button>
+            <button class="page-btn">5</button>
+            <button class="page-btn">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+
+        {% else %}
+          <!-- Empty State (Hidden by default) -->
+          <div class="empty-state" id="emptyState">
+              <div class="empty-icon">
+                  <i class="far fa-newspaper"></i>
+              </div>
+              <h2 class="empty-title">Postlar topilmadi</h2>
+              <p class="empty-description" id="emptyDescription">
+                  Sizning qidiruv so'rovingizga mos keladigan postlar topilmadi. 
+                  Boshqa kalit so'zlar bilan qidirib ko'ring yoki yangi post yarating.
+              </p>
+              <a href="{% url 'post_create' %}" class="btn btn-primary">
+                  <i class="fas fa-plus"></i> Yangi Post Yaratish
+              </a>
+          </div>
+        {% endif %}
+    </main>
+{% endblock %}

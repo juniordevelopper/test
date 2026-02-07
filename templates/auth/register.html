@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ro'yxatdan o'tish</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .header p {
+            margin-top: 5px;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+            position: relative;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .form-group i {
+            position: absolute;
+            left: 15px;
+            top: 40px;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: #8e2de2;
+            box-shadow: 0 0 0 3px rgba(142, 45, 226, 0.1);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 40px;
+            cursor: pointer;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .requirements {
+            display: none;
+            margin-top: 8px;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 4px solid #4a00e0;
+            font-size: 13px;
+        }
+
+        .requirements ul {
+            list-style: none;
+            padding-left: 5px;
+        }
+
+        .requirements li {
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .requirements i {
+            margin-right: 8px;
+            font-size: 12px;
+        }
+
+        .requirements .valid {
+            color: #28a745;
+        }
+
+        .requirements .invalid {
+            color: #dc3545;
+        }
+
+        .error-message {
+            color: #dc3545;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .success-message {
+            color: #28a745;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background: linear-gradient(to right, #3a00c0, #7e1dd2);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(142, 45, 226, 0.3);
+        }
+
+        .submit-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 25px;
+            color: #666;
+            font-size: 15px;
+        }
+
+        .login-link a {
+            color: #8e2de2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .strength-meter {
+            height: 5px;
+            width: 100%;
+            background: #e1e1e1;
+            border-radius: 5px;
+            margin-top: 8px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.3s, background 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                max-width: 100%;
+            }
+            
+            .header {
+                padding: 20px;
+            }
+            
+            .form-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Ro'yxatdan o'tish</h1>
+            <p>Yangi hisob yarating</p>
+        </div>
+        
+        <div class="form-container">
+            <form method="POST" id="registrationForm">
+              {% csrf_token %}
+                <!-- First Name -->
+                <div class="form-group">
+                    <label for="firstName">Ism</label>
+                    <i class="fas fa-user"></i>
+                    <input 
+                        name="firstname"
+                        type="text" 
+                        id="firstName" 
+                        class="form-control" 
+                        placeholder="Ismingizni kiriting"
+                        autocomplete="given-name"
+                    >
+                    <div class="error-message" id="firstNameError">
+                        Ism kamida 2 harfdan iborat bo'lishi kerak
+                    </div>
+                </div>
+                
+                <!-- Last Name -->
+                <div class="form-group">
+                    <label for="lastName">Familiya</label>
+                    <i class="fas fa-user-tag"></i>
+                    <input 
+                        name="lastname"
+                        type="text" 
+                        id="lastName" 
+                        class="form-control" 
+                        placeholder="Familiyangizni kiriting"
+                        autocomplete="family-name"
+                    >
+                    <div class="error-message" id="lastNameError">
+                        Familiya kamida 2 harfdan iborat bo'lishi kerak
+                    </div>
+                </div>
+                
+                <!-- Username -->
+                <div class="form-group">
+                    <label for="username">Foydalanuvchi nomi</label>
+                    <i class="fas fa-at"></i>
+                    <input 
+                        name="username"
+                        type="text" 
+                        id="username" 
+                        class="form-control" 
+                        placeholder="Foydalanuvchi nomingiz"
+                        autocomplete="username"
+                    >
+                    <div class="error-message" id="usernameError">
+                        Foydalanuvchi nomi 3-20 belgidan iborat bo'lishi va faqat harf, raqam, _, . belgilardan iborat bo'lishi kerak
+                    </div>
+                    <div class="success-message" id="usernameSuccess">
+                        Foydalanuvchi nomi mavjud emas
+                    </div>
+                </div>
+                
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email manzil</label>
+                    <i class="fas fa-envelope"></i>
+                    <input 
+                        name="email"
+                        type="email" 
+                        id="email" 
+                        class="form-control" 
+                        placeholder="example@mail.com"
+                        autocomplete="email"
+                    >
+                    <div class="error-message" id="emailError">
+                        Iltimos, to'g'ri email manzil kiriting
+                    </div>
+                    <div class="success-message" id="emailSuccess">
+                        Email manzil mavjud emas
+                    </div>
+                </div>
+                
+                <!-- Phone -->
+                <div class="form-group">
+                    <label for="phone">Telefon raqam</label>
+                    <i class="fas fa-phone"></i>
+                    <input 
+                        name="phone"
+                        type="tel" 
+                        id="phone" 
+                        class="form-control" 
+                        placeholder="+998901234567"
+                        autocomplete="tel"
+                    >
+                    <div class="error-message" id="phoneError">
+                        Iltimos, to'g'ri telefon raqam kiriting (masalan: +998901234567)
+                    </div>
+                </div>
+                
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="password">Parol</label>
+                    <i class="fas fa-lock"></i>
+                    <input 
+                        name="password"
+                        type="password" 
+                        id="password" 
+                        class="form-control" 
+                        placeholder="Kuchli parol yarating"
+                        autocomplete="new-password"
+                    >
+                    <div class="strength-meter">
+                        <div class="strength-fill" id="passwordStrength"></div>
+                    </div>
+                    <div class="requirements" id="passwordRequirements">
+                        <ul>
+                            <li id="reqLength"><i class="fas fa-circle"></i> Kamida 8 belgi</li>
+                            <li id="reqUppercase"><i class="fas fa-circle"></i> Kamida 1 bosh harf</li>
+                            <li id="reqLowercase"><i class="fas fa-circle"></i> Kamida 1 kichik harf</li>
+                            <li id="reqNumber"><i class="fas fa-circle"></i> Kamida 1 raqam</li>
+                            <li id="reqSpecial"><i class="fas fa-circle"></i> Kamida 1 maxsus belgi (!@#$%^&*)</li>
+                        </ul>
+                    </div>
+                    <div class="error-message" id="passwordError">
+                        Parol talablarga javob bermaydi
+                    </div>
+                </div>
+                
+                <!-- Confirm Password -->
+                <div class="form-group">
+                    <label for="confirmPassword">Parolni tasdiqlash</label>
+                    <i class="fas fa-lock"></i>
+                    <input 
+                        type="password" 
+                        id="confirmPassword" 
+                        class="form-control" 
+                        placeholder="Parolni qayta kiriting"
+                        autocomplete="new-password"
+                    >
+                    <div class="error-message" id="confirmPasswordError">
+                        Parollar mos kelmaydi
+                    </div>
+                </div>
+                
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn" id="submitBtn">
+                    Ro'yxatdan o'tish
+                </button>
+                
+                <div class="login-link">
+                    Hisobingiz bormi? <a href="{% url 'login' %}">Tizimga kirish</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

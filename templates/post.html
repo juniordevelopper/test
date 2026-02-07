@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+<!-- Main Content -->
+{% block content %}
+  <main class="container">
+      <!-- Back Button -->
+      <div class="page-header" style="margin-bottom: 20px;">
+          <a href="{% url 'posts' %}" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 8px;">
+              <i class="fas fa-arrow-left"></i> Orqaga
+          </a>
+      </div>
+
+      <!-- Single Post Detail -->
+      <div class="post-detail">
+          <!-- Post Header -->
+          <div class="post-header" style="margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e2e8f0;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                  <div>
+                      <h1 class="page-title" style="font-size: 36px; color: #1e293b; margin-bottom: 15px;">
+                          {{ post.title }}
+                      </h1>
+                      <div class="post-meta" style="display: flex; align-items: center; gap: 25px; color: #64748b; font-size: 16px;">
+                          <span class="post-author" style="display: flex; align-items: center; gap: 8px;">
+                              <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                                  {{ post.author.first_name|first|upper }}{{ post.author.last_name|first|upper }}
+                              </div>
+                              <span>
+                                  <strong>{{ post.author.first_name }} {{ post.author.last_name }}</strong>
+                                  <div style="font-size: 14px; color: #94a3b8;">@{{ post.author.username }}</div>
+                              </span>
+                          </span>
+                          <span class="post-date" style="display: flex; align-items: center; gap: 8px;">
+                              <i class="far fa-clock"></i>
+                              <span>Yaratilgan: {{ post.created_at | timesince }} | {{ post.created_at|date:"d-m-Y H:i" }}</span>
+                          </span>
+                          {% if post.updated_at != post.created_at %}
+                          <span class="post-updated" style="display: flex; align-items: center; gap: 8px;">
+                              <i class="fas fa-edit"></i>
+                              <span>Tahrirlangan: {{ post.updated_at | timesince }} | {{ post.updated_at|date:"d-m-Y H:i" }}</span>
+                          </span>
+                          {% endif %}
+                      </div>
+                  </div>
+                  
+                  {% if request.user == post.author %}
+                  <div style="display: flex; flex-direction: column; margin-left: 50px; gap: 10px;">
+                      <a href="{% url 'post_update' post.id %}" class="btn btn-secondary" style="padding: 10px 20px;">
+                          <i class="fas fa-edit"></i> Tahrirlash
+                      </a>
+                      <a href="{% url 'post_delete' post.id %}" class="btn btn-primary" style="background: linear-gradient(135deg, #ef4444, #dc2626); padding: 10px 20px;">
+                          <i class="fas fa-trash"></i> O'chirish
+                      </a>
+                  </div>
+                  {% endif %}
+              </div>
+          </div>
+
+          <!-- Post Content -->
+          <div class="post-content" style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08); margin-bottom: 40px;">
+              <div style="font-size: 18px; line-height: 1.8; color: #334155;">
+                  {{ post.body|linebreaks }}
+              </div>
+          </div>
+      </div>
+  </main>
+{% endblock %}
